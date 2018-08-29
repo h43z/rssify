@@ -13,7 +13,13 @@ for section in config.sections():
     r = requests.get(s['url'])
     soup = BeautifulSoup(r.text, 'lxml')
     titles = soup.select(s['item_title'])
-    dates = soup.select(s['item_date'])
+    urls = soup.select(s['item_url'])
+
+    if 'item_date' in s:
+        dates = soup.select(s['item_date'])
+    else:
+        dates = None
+
 
     fg = FeedGenerator()
     fg.title(section)
@@ -23,11 +29,14 @@ for section in config.sections():
     for i in range(len(titles)):
         fe = fg.add_entry()
         fe.title(titles[i].text)
-        fe.link(href=titles[i].get('href'), rel='alternate')
-        date = datetime.strptime(dates[i].text.strip(), s['item_date_format'])
-        if config.has_option(section, 'item_timezone'):
-            localtz = timezone(s['item_timezone'])        
-            date = localtz.localize(date)
+        fe.link(href=urls[i].get('href'), rel='alternate')
+        if dates is not None:
+            date = datetime.strptime(dates[i].text.strip(), s['item_date_format'])
+            if config.has_option(section, 'item_timezone'):
+                localtz = timezone(s['item_timezone'])        
+                date = localtz.localize(date)
+        else:
+            date = '1970-01-01 00:00:00+02:00'
 
         fe.published(date)
 
