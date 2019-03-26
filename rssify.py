@@ -20,13 +20,15 @@ for section in config.sections():
     else:
         dates = None
 
-
     fg = FeedGenerator()
     fg.title(section)
     fg.description(section)
     fg.link(href=s['url'], rel='alternate')
 
     for i in range(len(titles)):
+        if i > len(urls) - 1:
+            break
+
         fe = fg.add_entry()
         fe.title(titles[i].text)
         fe.link(href=urls[i].get('href'), rel='alternate')
@@ -36,7 +38,7 @@ for section in config.sections():
                 localtz = timezone(s['item_timezone'])        
                 date = localtz.localize(date)
         else:
-            date = '1970-01-01 00:00:00+02:00'
+            date = datetime.now(timezone("Europe/Berlin")) 
 
         fe.published(date)
 
