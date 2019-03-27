@@ -36,7 +36,8 @@ for section in config.sections():
             date = datetime.strptime(dates[i].text.strip(), s['item_date_format'])
             if config.has_option(section, 'item_timezone'):
                 localtz = timezone(s['item_timezone'])        
-                date = localtz.localize(date)
+                #date = localtz.localize(date)
+                date = '1970-01-01 00:00:00+02:00'
         else:
             date = datetime.now(timezone("Europe/Berlin")) 
 
